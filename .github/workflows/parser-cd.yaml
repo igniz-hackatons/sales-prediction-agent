@@ -34,7 +34,7 @@ jobs:
       - name: Build and Push Parser Image
         uses: docker/build-push-action@v4
         with:
-          context: ./parser/Dockerfile
+          context: ./parser
           file: ./parser/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/${{ secrets.PARSER_REPOSITORY_NAME }}:latest
