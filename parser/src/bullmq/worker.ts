@@ -1,10 +1,8 @@
-import type { Job } from 'bullmq';
+import type { Job } from "bullmq";
 
-import { Worker } from 'bullmq';
+import { Worker } from "bullmq";
 
-import { logger } from '@/lib/loger';
-
-import type { QueueModuleOptions } from './types/options';
+import type { QueueModuleOptions } from "./types/options";
 
 export class WorkerFactory<TData = any, TResult = any> {
   public name: string;
@@ -26,26 +24,26 @@ export class WorkerFactory<TData = any, TResult = any> {
         try {
           return await processor(job);
         } catch (err) {
-          logger.error(`[Worker:${this.name}] job failed:`, err);
+          console.error(`[Worker:${this.name}] job failed:`, err);
           throw err;
         }
       },
       {
         connection: opts.redis,
-        ...workerOptions
+        ...workerOptions,
       }
     );
 
-    this.worker.on('error', (err) => {
-      logger.error(`[Worker:${this.name}] error:`, err);
+    this.worker.on("error", (err) => {
+      console.error(`[Worker:${this.name}] error:`, err);
     });
 
-    this.worker.on('completed', (job) => {
-      logger.info(`[Worker:${this.name}] completed job ${job.id}`);
+    this.worker.on("completed", (job) => {
+      console.info(`[Worker:${this.name}] completed job ${job.id}`);
     });
 
-    this.worker.on('failed', (job, err) => {
-      logger.warn(`[Worker:${this.name}] failed job ${job?.id}:`, err.message);
+    this.worker.on("failed", (job, err) => {
+      console.warn(`[Worker:${this.name}] failed job ${job?.id}:`, err.message);
     });
   }
 
