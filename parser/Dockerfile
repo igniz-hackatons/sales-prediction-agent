@@ -21,7 +21,7 @@ FROM node:20.11-alpine AS production
 WORKDIR /var/www
 
 COPY package.json package-lock.json* ./
-RUN npm ci --omit=dev --frozen-lockfile
+RUN npm install --omit=dev --frozen-lockfile
 
 COPY --from=builder /var/www/dist ./dist
 
