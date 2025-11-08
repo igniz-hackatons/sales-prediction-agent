@@ -5,7 +5,7 @@ import axios from "axios";
 import { DI } from "../main";
 import config from "../config";
 import { error } from "console";
-import { IDeals, IParsedResponse } from "./types/parser.types";
+import { IDeal, IParsedResponse } from "./types/parser.types";
 
 export const forceStart = async (job: Job<any, any>) => {
   const result = await startParsing();
@@ -14,86 +14,136 @@ export const forceStart = async (job: Job<any, any>) => {
 
 export const startParsing = async () => {
   try {
-    // const steps = {
-    //   contacts: "api/v4/contacts",
-    //   statuses: "api/v4/leads/pipelines/10263418/statuses",
-    //   dealById: "api/v4/leads/",
-    //   itemById: "api/v2/catalog_elements",
-    // };
+    const steps = {
+      contacts: "api/v4/contacts",
+      statuses: "api/v4/leads/pipelines/10263418/statuses",
+      dealById: "api/v4/leads/",
+      catalogElements: "api/v2/catalog_elements",
+      lossReasons: "api/v4/leads/loss_reasons",
+    };
 
-    // const contactsRequest = axios.get(
-    //   `${config.external.crm.baseUrl}${steps[0]}`,
-    //   {
-    //     headers: {
-    //       Authorization: `Bearer ${config.external.crm.token}`,
-    //       "Content-Type": "application/json",
-    //     },
-    //     params: {
-    //       with: "leads",
-    //     },
-    //   }
-    // );
+    const contactsRequest = axios.get(
+      `${config.external.crm.baseUrl}${steps[0]}`,
+      {
+        headers: {
+          Authorization: `Bearer ${config.external.crm.token}`,
+          "Content-Type": "application/json",
+        },
+        params: {
+          with: "leads",
+        },
+      }
+    );
 
-    // const statusesRequest = axios.get(
-    //   `${config.external.crm.baseUrl}${steps[1]}`,
-    //   {
-    //     headers: {
-    //       Authorization: `Bearer ${config.external.crm.token}`,
-    //       "Content-Type": "application/json",
-    //     },
-    //     params: {
-    //       with: "leads",
-    //     },
-    //   }
-    // );
+    const statusesRequest = axios.get(
+      `${config.external.crm.baseUrl}${steps[1]}`,
+      {
+        headers: {
+          Authorization: `Bearer ${config.external.crm.token}`,
+          "Content-Type": "application/json",
+        },
+        params: {
+          with: "leads",
+        },
+      }
+    );
 
-    // const [contacts, statuses] = await Promise.all([
-    //   contactsRequest,
-    //   statusesRequest,
-    // ]).catch((error) => {
-    //   throw error;
-    // });
+    const catalogElementsRequest = axios.get(
+      `${config.external.crm.baseUrl}${steps[3]}`,
+      {
+        headers: {
+          Authorization: `Bearer ${config.external.crm.token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-    // if (contacts.status !== 200 || statuses.status !== 200) {
-    //   throw error;
-    // }
+    const lossReasonsRequest = axios.get(
+      `${config.external.crm.baseUrl}${steps[4]}`,
+      {
+        headers: {
+          Authorization: `Bearer ${config.external.crm.token}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-    // const result = {} as IParsedResponse;
+    const [contacts, statuses, catalogElements, lossReasons] = await Promise.all([
+      contactsRequest,
+      statusesRequest,
+      catalogElementsRequest,
+      lossReasonsRequest
+    ]).catch((error) => {
+      throw error;
+    });
 
-    // for (const contact of contacts.data._embedded.contacts) {
-    //   result.client_id = contact.id;
-    //   result.name = contact.name;
-    //   result.created_at = contact.created_at;
-    //   result.updated_at = contact.updated_at;
-    //   contact.custom_fields_values.map((field) => {
-    //     if (field.field_code === "PHONE")
-    //       result.phone_number = field.values.values[0].value;
-    //     if (field.field_code === "EMAIL")
-    //       result.email = field.values.values[0].value;
-    //   });
-    //   const leads = contact._embedded.leads.map((lead) => lead.id ?? "");
-    //   const dealsList: IDeals[] = [];
-    //   for (let i = 0; i < leads.lenght; i++) {
-    //     const deals = await axios.get(
-    //       `${config.external.crm.baseUrl}${steps[2]}${leads[i]}`,
-    //       {
-    //         headers: {
-    //           Authorization: `Bearer ${config.external.crm.token}`,
-    //           "Content-Type": "application/json",
-    //         },
-    //         params: {
-    //           with: "catalog_elements",
-    //         },
-    //       }
-    //     );
+    if (contacts.status !== 200 || statuses.status !== 200 || catalogElements.status !== 200 || lossReasons.status !== 200) {
+      throw error;
+    }
 
-    //     if (deals.status !== 200) throw new Error(deals.statusText);
-    //   }
-    // }
-    const result = {
-      name: "TEst",
-      deals: [{ price: 123124, name: "deal1" }],
-    } as IParsedResponse;
+    const result = {} as IParsedResponse;
+
+    for (const contact of contacts.data._embedded.contacts) {
+      result.client_id = contact.id;
+      result.name = contact.name;
+      result.created_at = contact.created_at;
+      result.updated_at = contact.updated_at;
+      result.deals = []
+      contact.custom_fields_values.map((field) => {
+        if (field.field_code === "PHONE")
+          result.phone_number = field.values.values[0].value;
+        if (field.field_code === "EMAIL")
+          result.email = field.values.values[0].value;
+      });
+      const leads = contact._embedded.leads.map((lead) => lead.id ?? "");
+      for (let i = 0; i < leads.lenght; i++) {
+        const deal = await axios.get(
+          `${config.external.crm.baseUrl}${steps[2]}${leads[i]}`,
+          {
+            headers: {
+              Authorization: `Bearer ${config.external.crm.token}`,
+              "Content-Type": "application/json",
+            },
+            params: {
+              with: "catalog_elements",
+            },
+          }
+        );
+
+        if (deal.status !== 200) throw new Error(deal.statusText);
+
+        const clearedDeal = {
+          name: deal.data.name,
+          price: deal.data.price,
+          closed_at: deal.data.closed_at,
+          created_at: deal.data.created_at,
+          updated_at: deal.data.updated_at,
+          lossReason: lossReasons.data._embedded.loss_reasons.find((lossReason) => lossReason.id === deal.data.loss_reason_id)?.name || null,
+          status: statuses.data._embedded.statuses.find((status) => status.id === deal.data.status_id)?.name || null,
+          items: []
+        } as IDeal
+
+        for(const catalogElement of catalogElements.data._embedded.items) {
+          for(const dealId of catalogElement.leads.id) {
+            if(dealId === deal.data.id){
+              clearedDeal.items.push({
+                name: catalogElement.name,
+                price: catalogElement.price
+              })
+            }
+          }
+        }
+
+        result.deals.push(clearedDeal)
+      }
+    }
+
+
+    console.log(result);
+    // const result = {
+    //   name: "TEst",
+    //   deals: [{ price: 123124, name: "deal1" }],
+    // } as IParsedResponse;
     DI.parserQueue.addJob("parser_done", result);
   } catch (error) {
     console.error(error);
