@@ -54,15 +54,10 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install SSH keys
-        run: |
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          cat << 'EOF' > ~/.ssh/id_rsa
-          ${{ secrets.SSH_PRIVATE_KEY }}
-          EOF
-              chmod 600 ~/.ssh/id_rsa
-              ssh-keyscan -H ${{ secrets.REMOTE_HOST }} >> ~/.ssh/known_hosts
+      - name: Start SSH agent
+        uses: webfactory/ssh-agent@v0.8.1
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: Copy docker-compose file
         run: |
@@ -70,9 +65,9 @@ jobs:
           ./parser/docker-compose.yaml \
           ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }}:${{ secrets.PATH_TO_PROJECT }}/docker-compose.parser.yml
 
-      - name: Create .env file and set enviroment variables
+      - name: Create .env file and set environment variables
         run: |
-          ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
           cd ${{ secrets.PATH_TO_PROJECT }}
           cat << 'ENV_EOF' > .env
           REDIS_PORT=${{ env.REDIS_PORT }}
@@ -82,13 +77,14 @@ jobs:
           AMOCRM_URL=${{ env.AMOCRM_URL }}          
           DOCKER_IMAGE=${{ secrets.DOCKER_USERNAME }}/${{ secrets.PARSER_REPOSITORY_NAME }}:latest
           ENV_EOF
+          EOF
 
       - name: Deploy to production
         run: |
-          ssh ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
+          ssh -o StrictHostKeyChecking=no ${{ secrets.REMOTE_USER }}@${{ secrets.REMOTE_HOST }} << 'EOF'
             cd ${{ secrets.PATH_TO_PROJECT }}
             chmod 600 .env
-            
+
             if [ ! "$(docker ps -q -f name=redis)" ]; then
               docker compose -f docker-compose.parser.yml pull
               docker compose -f docker-compose.parser.yml up -d
@@ -96,6 +92,6 @@ jobs:
               docker compose -f docker-compose.parser.yml pull parser
               docker compose -f docker-compose.parser.yml up -d --no-deps parser
             fi
-            
+
             docker system prune -f -a
           EOF
