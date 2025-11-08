@@ -11,6 +11,7 @@ import type { RedisConnectionOptions } from './bullmq/types/options';
 
 import { QueueFactory } from './bullmq/queue';
 import { WorkerFactory } from './bullmq/worker';
+// import { WorkerFactory } from './bullmq/worker';
 import WorkerRouter from './bullmq/worker-router';
 import config from './config';
 import redisClient from './db/redis';
@@ -29,7 +30,7 @@ export const DI = {} as {
   server: http.Server;
   mlQueue: QueueFactory;
   scrapperQueue: QueueFactory;
-  scrapperWorker: WorkerFactory;
+  // scrapperWorker: WorkerFactory;
   mlWorker: WorkerFactory;
   workerRouter: WorkerRouter;
 };
@@ -95,23 +96,26 @@ export const init = (async () => {
     password: config.database.redis.password
   };
 
-  const scrapperQueue = new QueueFactory('parser', {
+  const scrapperQueue = new QueueFactory('parserIncome', {
     redis: redisConnectionOptions
   });
-  const mlQueue = new QueueFactory('ml', { redis: redisConnectionOptions });
-  const scrapperWorker = new WorkerFactory('parser', DI.workerRouter.getDynamicProcessor(), {
+  const mlQueue = new QueueFactory('mlIncome', {
     redis: redisConnectionOptions
   });
+  // const mlQueue = new QueueFactory('ml', { redis: redisConnectionOptions });
+  // const scrapperWorker = new WorkerFactory('parser', DI.workerRouter.getDynamicProcessor(), {
+  //   redis: redisConnectionOptions
+  // });
   const mlWorker = new WorkerFactory('ml', DI.workerRouter.getDynamicProcessor(), {
     redis: redisConnectionOptions
   });
 
   // mlQueue.addJob('done_analyse', { prefix: 'done_analyse' });
-  mlQueue.addJob('ml_analyze', { prefix: 'ml_analyze' });
+  // mlQueue.addJob('ml_analyze', { prefix: 'ml_analyze' });
 
   DI.server = app.listen(port, () => logger.info(`listening in port:${port}`));
   DI.mlQueue = mlQueue;
   DI.scrapperQueue = scrapperQueue;
-  DI.mlWorker = scrapperWorker;
-  DI.scrapperWorker = mlWorker;
+  DI.mlWorker = mlWorker;
+  // DI.scrapperWorker = mlWorker;
 })();

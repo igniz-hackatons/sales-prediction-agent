@@ -7,9 +7,8 @@ export class WorkerRouter {
 
   add<TData = any, TResult = any>(opts: IProccesor<TData, TResult>) {
     if (this.processorList.find((p) => p.prefix === opts.prefix)) {
-      throw new Error(
-        `Processor with prefix \"${opts.prefix}\" already exists`
-      );
+      console.error(`Processor with prefix \"${opts.prefix}\" already exists`);
+      return;
     }
     this.processorList.push(opts);
   }
@@ -19,7 +18,8 @@ export class WorkerRouter {
   ): (job: Job<TData, TResult>) => Promise<TResult> | TResult {
     const found = this.processorList.find((item) => item.prefix === prefix);
     if (!found) {
-      throw new Error(`No processor found for prefix: ${prefix}`);
+      console.error(`No processor found for prefix: ${prefix}`);
+      return;
     }
     return found.func;
   }
@@ -28,7 +28,8 @@ export class WorkerRouter {
     return async (job: Job<TData, TResult>) => {
       const prefix = job.name;
       if (!prefix) {
-        throw new Error("Job does not contain prefix field");
+        console.error("Job does not contain prefix field");
+        return;
       }
       const processor = this.getProcessor(prefix);
       return processor(job);

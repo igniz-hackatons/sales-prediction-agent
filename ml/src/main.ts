@@ -9,7 +9,7 @@ import { registerWorkers } from "./ml-service/ml.router";
 
 export const DI = {} as {
   mlQueue: QueueFactory;
-  mlWorker: WorkerFactory;
+  parserWorker: WorkerFactory;
   workerRouter: typeof WorkerRouter;
 };
 
@@ -22,8 +22,8 @@ export const initMl = (async () => {
 
   DI.workerRouter = WorkerRouter;
 
-  DI.mlQueue = new QueueFactory("ml", { redis: redisConnectionOptions });
-  DI.mlWorker = new WorkerFactory("ml", DI.workerRouter.getDynamicProcessor(), {
+  DI.mlQueue = new QueueFactory("mlResults", { redis: redisConnectionOptions });
+  DI.parserWorker = new WorkerFactory("parser", DI.workerRouter.getDynamicProcessor(), {
     redis: redisConnectionOptions,
   });
 
