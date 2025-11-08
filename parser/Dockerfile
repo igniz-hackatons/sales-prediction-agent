@@ -10,7 +10,7 @@ WORKDIR /var/www
 
 COPY package.json ./
 
-RUN npm install --frozen-lockfile
+RUN npm install
 
 COPY . .
 
@@ -20,15 +20,15 @@ FROM node:20.11-alpine AS production
 
 WORKDIR /var/www
 
+COPY package.json package-lock.json* ./
+RUN npm ci --omit=dev --frozen-lockfile
+
 COPY --from=builder /var/www/dist ./dist
 
-RUN apk add --no-cache jq
-RUN apk del jq
+ENV REDIS_HOST=$REDIS_HOST \
+    REDIS_PORT=$REDIS_PORT \
+    REDIS_PASSWORD=$REDIS_PASSWORD \
+    AMOCRM_TOKEN=$AMOCRM_TOKEN \
+    AMOCRM_URL=$AMOCRM_URL
 
-ENV REDIS_HOST="${REDIS_HOST}" \
-  REDIS_PORT="${REDIS_PORT}" \
-  REDIS_PASSWORD="${REDIS_PASSWORD}" \
-  AMOCRM_TOKEN="${AMOCRM_TOKEN}" \
-  AMOCRM_URL="${AMOCRM_URL}"
-
-RUN node dist/main.js
+CMD ["node", "dist/main.js"]
