@@ -15,7 +15,7 @@ export const DI = {} as {
     workerRouter: typeof WorkerRouter;
 };
 
-export const init = (async () => {
+export const init = async () => {
     const redisConnectionOptions: RedisConnectionOptions = {
         host: config.database.redis.host,
         port: +config.database.redis.port,
@@ -37,4 +37,8 @@ export const init = (async () => {
     registerWorkers();
     logger.info("[PARSER] - service is UP");
     startParsing();
-})();
+};
+
+cron.schedule('*/30 * * * *', async () => {
+  await init();
+});
