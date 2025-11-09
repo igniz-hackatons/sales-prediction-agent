@@ -35,8 +35,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "3"
-          memory: 2048M
+          cpus: "1.5"
+          memory: 1024M
 
 networks:
   crm-predictor-network:
