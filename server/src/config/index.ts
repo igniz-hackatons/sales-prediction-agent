@@ -14,7 +14,7 @@ export default {
     productionUrl: env.PRODUCTION_URL || `localhost:${env.PORT}`
   },
   cors: {
-    origin: ['http://localhost:5173', 'http://127.0.0.1:8000', env.CLIENT_BASE_URL],
+    origin: ['http://localhost:8000', 'http://127.0.0.1:8000', env.CLIENT_BASE_URL],
     credentials: true
   } as CorsOptions,
   database: {
@@ -30,6 +30,12 @@ export default {
       host: env.REDIS_HOST,
       port: env.REDIS_PORT,
       password: env.REDIS_PASSWORD
+    }
+  },
+  external: {
+    chat: {
+      token: env.CHAT_API_TOKEN,
+      url: env.CHAT_API_URL
     }
   }
 } as const;

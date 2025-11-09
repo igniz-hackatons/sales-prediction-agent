@@ -1,17 +1,17 @@
 import { env } from "./env";
 
 export default {
-  database: {
-    redis: {
-      host: env.REDIS_HOST,
-      port: env.REDIS_PORT,
-      password: env.REDIS_PASSWORD,
+    database: {
+        redis: {
+            host: env.REDIS_HOST,
+            port: env.REDIS_PORT,
+            password: env.REDIS_PASSWORD,
+        },
     },
-  },
-  external: {
-    crm: {
-      token: env.AMOCRM_TOKEN,
-      baseUrl: env.AMOCRM_URL,
+    external: {
+        crm: {
+            token: env.AMOCRM_TOKEN,
+            baseUrl: env.AMOCRM_URL,
+        },
     },
-  },
 } as const;

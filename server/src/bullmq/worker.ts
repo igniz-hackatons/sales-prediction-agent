@@ -26,7 +26,7 @@ export class WorkerFactory<TData = any, TResult = any> {
         try {
           return await processor(job);
         } catch (err) {
-          logger.error(`[Worker:${this.name}] job failed:`, err);
+          logger.error(`[SERVER] [Worker:${this.name}] job failed:`, err);
           throw err;
         }
       },
@@ -37,15 +37,15 @@ export class WorkerFactory<TData = any, TResult = any> {
     );
 
     this.worker.on('error', (err) => {
-      logger.error(`[Worker:${this.name}] error:`, err);
+      logger.error(`[SERVER] [Worker:${this.name}] error:`, err);
     });
 
     this.worker.on('completed', (job) => {
-      logger.info(`[Worker:${this.name}] completed job ${job.id}`);
+      logger.info(`[SERVER] [Worker:${this.name}] completed job ${job.id}`);
     });
 
     this.worker.on('failed', (job, err) => {
-      logger.warn(`[Worker:${this.name}] failed job ${job?.id}:`, err.message);
+      logger.warn(`[SERVER] [Worker:${this.name}] failed job ${job?.id}:`, err.message);
     });
   }
 

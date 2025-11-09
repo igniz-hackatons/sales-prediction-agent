@@ -2,6 +2,7 @@ import { sql } from 'drizzle-orm';
 
 import { db } from '@/db/drizzle/connect';
 import { clients } from '@/db/drizzle/schema/lead/schema';
+import { logger } from '@/lib/loger';
 
 export const getAllLatest = async () => {
   try {

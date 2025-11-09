@@ -19,7 +19,7 @@ const logFormat = format.combine(
 );
 
 export const logger = createLogger({
-    level: "info",
+    level: "debug",
     format: logFormat,
     transports: [
         new transports.Console(),

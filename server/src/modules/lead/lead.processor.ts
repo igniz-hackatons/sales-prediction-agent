@@ -9,7 +9,7 @@ import { logger } from '@/lib/loger';
 export const processMlResponse = async (job: Job<MlResponse[], any>) => {
   try {
     const data = job.data;
-    logger.info(`Получено ${data.length} записей от ML-SERVICE`);
+    logger.info(`[SERVER] Получено ${data.length} записей от ML-SERVICE`);
     const dataToUpsert = [];
 
     data.map(async (client) => {
@@ -28,9 +28,9 @@ export const processMlResponse = async (job: Job<MlResponse[], any>) => {
     });
     await db.insert(clients).values(dataToUpsert);
 
-    logger.info('Обработка ответа завершена успешно');
+    logger.info('[SERVER] Обработка ответа завершена успешно');
   } catch (error) {
-    logger.error('Ошибка при обработке ответа:', error);
+    logger.error('[SERVER] Ошибка при обработке ответа:', error);
     throw error;
   }
 };

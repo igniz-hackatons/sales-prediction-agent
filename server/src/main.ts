@@ -114,7 +114,9 @@ export const init = (async () => {
   // mlQueue.addJob('done_analyse', { prefix: 'done_analyse' });
   // mlQueue.addJob('ml_analyze', { prefix: 'ml_analyze' });
 
-  DI.server = app.listen(port, () => logger.info(`listening in port:${port}`));
+  DI.server = app.listen(port, () =>
+    logger.info(`[SERVER] - Started and listening in port:${port}`)
+  );
   DI.mlQueue = mlQueue;
   DI.scrapperQueue = scrapperQueue;
   DI.mlWorker = mlWorker;

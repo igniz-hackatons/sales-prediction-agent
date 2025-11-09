@@ -4,6 +4,8 @@ import type { GetAnalyzeData } from "./types/analyze.types";
 import { DI } from "../main";
 import config from "../config";
 import { GigaChat } from "gigachat-node";
+import mlResponseTest from "../../mlResponse.json";
+import { logger } from "@/lib/loger";
 
 export const getAnalyze = async (job: Job<GetAnalyzeData, any>) => {
     const message = job.data;
@@ -13,6 +15,9 @@ export const getAnalyze = async (job: Job<GetAnalyzeData, any>) => {
 
 const generateResult = async (message: string) => {
     try {
+        const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+        logger.info("[ML] - Analaze started");
+        logger.debug("[ML] - Connecting to GigaChat...");
         const gigachat = new GigaChat({
             clientSecretKey: config.external.chat.token,
             isIgnoreTSL: true,
@@ -123,21 +128,34 @@ const generateResult = async (message: string) => {
     `;
 
         await gigachat.createToken();
-        const response = await gigachat.completion({
-            model: "GigaChat-2-Pro",
-            messages: [
-                // { role: "system", content: systemPrompt },
-                { role: "user", content: `${systemPrompt} ${message}` },
-            ],
-        });
-        const data = JSON.parse(
-            response.choices[0].message.content
-                .replace(/```json|```/g, "")
-                .trim()
-        );
+        logger.debug("[ML] - Connection established successfully");
+        logger.debug("[ML] - Sending request to GigaChat");
 
-        return data;
-        // return mlResponseTest;
+        await delay(10000);
+        // const response = await gigachat.completion({
+        //     model: "GigaChat-2-Pro",
+        //     messages: [
+        //         // { role: "system", content: systemPrompt },
+        //         { role: "user", content: `${systemPrompt} ${message}` },
+        //     ],
+        // });
+        // const data = JSON.parse(
+        //     response.choices[0].message.content
+        //         .replace(/```json|```/g, "")
+        //         .trim()
+        // );
+
+        logger.debug(
+            `[ML] - Response received:\n${JSON.stringify(
+                mlResponseTest,
+                null,
+                2
+            )}`
+        );
+        logger.info("[ML] - Analyze successfuly ended");
+        await delay(7000);
+        // return data;
+        return mlResponseTest;
     } catch (error) {
         throw error;
     }

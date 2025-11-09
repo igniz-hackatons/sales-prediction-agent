@@ -6,6 +6,7 @@ import { DI } from "../main";
 import config from "../config";
 import { error } from "console";
 import { IDeal, IParsedResponse } from "./types/parser.types";
+import { logger } from "../lib/loger";
 
 export const forceStart = async (job: Job<any, any>) => {
     const result = await startParsing();
@@ -21,7 +22,7 @@ export const startParsing = async () => {
             catalogElements: "api/v2/catalog_elements",
             lossReasons: "api/v4/leads/loss_reasons",
         };
-
+        logger.info("[PARSER] - actual data parsing started");
         const contactsRequest = axios.get(
             `${config.external.crm.baseUrl}${steps.contacts}`,
             {
@@ -156,13 +157,13 @@ export const startParsing = async () => {
             }
             resultCols.push(result);
         }
-
-        console.log(resultCols[0].deals[1].items);
-        const result = {
-            name: "TEst",
-            deals: [{ price: 123124, name: "deal1" }],
-        } as IParsedResponse;
-        // DI.parserQueue.addJob("parser_done", resultCols);
+        logger.debug(
+            `[PARSER] - Parser log:\n${JSON.stringify(resultCols, null, 2)}`
+        );
+        logger.info("[PARSER] - Parsing proccess ended successfuly");
+        const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+        await delay(3000);
+        DI.parserQueue.addJob("parser_done", resultCols);
         // DI.parserQueue.addJob("parser_done", {});
     } catch (error) {
         console.error(error);
