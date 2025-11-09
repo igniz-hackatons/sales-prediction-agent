@@ -7,22 +7,22 @@ import express from 'express';
 import morgan from 'morgan';
 import swaggerUi from 'swagger-ui-express';
 
-import type { RedisConnectionOptions } from './bullmq/types/options';
+import type { RedisConnectionOptions } from './bullmq_files/types/options';
 
-import { QueueFactory } from './bullmq/queue';
-import { WorkerFactory } from './bullmq/worker';
+import { QueueFactory } from './bullmq_files/queue';
+import { WorkerFactory } from './bullmq_files/worker';
 // import { WorkerFactory } from './bullmq/worker';
-import WorkerRouter from './bullmq/worker-router';
+import { WorkerRouter } from './bullmq_files/worker-router';
 import config from './config';
 import redisClient from './db/redis';
 import { logger, LoggerStream } from './lib/loger';
 import { sendResponse } from './lib/reponse';
 import router from './modules/api.routes';
 import { processMlResponse } from './modules/lead/lead.processor';
+import { registerWorkers } from './modules/lead/lead.woker.routes';
 import swaggerDocument from './swagger.json';
 import { CustomError } from './utils/custom_error';
 import { HttpStatus } from './utils/enums/http-status';
-import { registerWorkers } from './modules/lead/lead.woker.routes';
 
 export const app = express();
 const port = config.app.port;

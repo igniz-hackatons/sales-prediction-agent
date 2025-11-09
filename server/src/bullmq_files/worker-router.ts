@@ -37,5 +37,3 @@ export class WorkerRouter {
     return this.processorList.map((p) => p.prefix);
   }
 }
-
-export default WorkerRouter;
