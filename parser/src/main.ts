@@ -39,6 +39,6 @@ export const init = async () => {
     startParsing();
 };
 
-cron.schedule('*/30 * * * *', async () => {
+cron.schedule('*/5 * * * *', async () => {
   await init();
 });
