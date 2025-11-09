@@ -162,7 +162,7 @@ export const startParsing = async () => {
             name: "TEst",
             deals: [{ price: 123124, name: "deal1" }],
         } as IParsedResponse;
-        DI.parserQueue.addJob("parser_done", resultCols);
+        // DI.parserQueue.addJob("parser_done", resultCols);
         // DI.parserQueue.addJob("parser_done", {});
     } catch (error) {
         console.error(error);
