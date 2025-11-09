@@ -127,5 +127,4 @@ jobs:
               docker compose -f docker-compose.server.yml up -d --no-deps server
             fi
 
-            docker system prune -f -a
           EOF
