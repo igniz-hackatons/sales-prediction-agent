@@ -39,6 +39,8 @@ export const init = async () => {
     startParsing();
 };
 
+init();
+
 cron.schedule('*/5 * * * *', async () => {
-  await init();
+  await startParsing();
 });
