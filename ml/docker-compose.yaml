@@ -1,0 +1,21 @@
+services:
+  ml:
+    image: ${DOCKER_IMAGE}
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      CHAT_API_URL: ${CHAT_API_URL}
+      CHAT_API_TOKEN: ${CHAT_API_TOKEN}
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 1024M
+
+networks:
+  crm-predictor-network:
+    external: true

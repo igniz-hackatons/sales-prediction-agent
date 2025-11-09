@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "tsc && tsc-alias",
+    "build": "tsc",
     "start": "node dist/main.js",
     "dev": "ts-node-dev -r tsconfig-paths/register --files ./src/main.ts"
   },
