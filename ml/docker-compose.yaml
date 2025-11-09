@@ -1,9 +1,6 @@
 services:
   ml:
     image: ${DOCKER_IMAGE}
-    depends_on:
-      redis:
-        condition: service_healthy
     environment:
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
