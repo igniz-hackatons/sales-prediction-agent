@@ -1,0 +1,57 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "SURGUAI2025 OpenAPI docs",
+    "version": "1.0.0",
+    "title": "SURGUAI2025"
+  },
+  "host": "localhost:8000",
+  "basePath": "/api",
+  "tags": [
+    {
+      "name": "Leads",
+      "description": "Leads related endpoints"
+    }
+  ],
+  "schemes": ["http"],
+  "paths": {
+    "/leads/all-latest": {
+      "get": {
+        "tags": ["Leads"],
+        "summary": "Get all latest leads",
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Leads retrieved successfully",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "statusCode": {
+                  "type": "number"
+                },
+                "message": {
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "definitions": {}
+}
