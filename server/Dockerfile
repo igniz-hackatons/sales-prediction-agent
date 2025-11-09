@@ -35,7 +35,6 @@ COPY --from=builder /var/www/dist ./dist
 COPY --from=builder /var/www/src/db/drizzle/migrations ./dist/db/drizzle/migrations
 COPY --from=builder /var/www/src/db/drizzle/migrations/meta ./dist/db/drizzle/migrations/meta
 COPY --from=builder /var/www/package-lock.json .
-COPY scripts/install-prod.sh ./scripts/install-prod.sh
 COPY package.json ./
 
 RUN apk add --no-cache jq
