@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "start": "node dist/main.js",
     "dev": "ts-node-dev -r tsconfig-paths/register --files ./src/main.ts"
   },
@@ -16,6 +16,7 @@
     "bullmq": "^5.63.0",
     "dotenv": "^17.2.3",
     "node-cron": "^4.2.1",
+    "winston": "^3.18.3",
     "zod": "^4.1.12"
   }
 }

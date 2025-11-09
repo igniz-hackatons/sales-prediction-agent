@@ -1,0 +1,32 @@
+@layer reset, primevue, custom;
+@import url('primeicons/primeicons.css') layer(primevue);
+@import url('./reset.css') layer(reset);
+
+@layer custom {
+ body {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 400;
+    
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  h1,h2,h3,h4,h5 {
+    font-weight: bold;
+  }
+
+  .text-sm {
+    font-size: 0.875rem;
+    line-height: calc(1.25 / 0.875);
+  }
+
+  .text-base {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .text-xl {
+    font-size: 1.25rem;
+    line-height: calc(1.75 / 1.25);
+  }
+}

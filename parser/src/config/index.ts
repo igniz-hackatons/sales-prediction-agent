@@ -10,8 +10,8 @@ export default {
   },
   external: {
     crm: {
-      token: env.AMOCRM_TOKEN,
-      baseUrl: env.AMOCRM_URL,
+      token: env.token,
+      baseUrl: env.baseUrl,
     },
   },
 } as const;
